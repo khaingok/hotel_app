@@ -1,0 +1,34 @@
+.home-container {
+  text-align: center;
+  padding: 50px;
+  font-family: Arial, sans-serif;
+}
+
+.hero-section {
+  background-color: #f4f4f4;
+  padding: 4rem;
+  border-radius: 10px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-section h1 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.book-btn {
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.2s;
+}
+
+.book-btn:hover {
+  background-color: #0056b3;
+}

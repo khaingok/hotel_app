@@ -1,0 +1,92 @@
+/* 1. Global Reset: Removes default browser spacing */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 2. Base Typography & Colors */
+:root {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* Hotel App Color Palette */
+  --primary-color: #0056b3;    /* Professional Blue */
+  --secondary-color: #f8f9fa;  /* Light Gray Background */
+  --text-color: #212529;       /* Dark Gray Text (easier on eyes than black) */
+  --border-color: #dee2e6;
+}
+
+body {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased; /* Makes fonts look sharp on Mac */
+}
+
+/* 3. Global Layout Helper */
+#root {
+  /* This ensures the React app takes up the full screen */
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 4. Global Link Styles */
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.2s;
+}
+
+a:hover {
+  opacity: 0.8;
+}
+
+/* 5. Global Button Reset (Optional, makes all buttons look decent) */
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* --- 1. GLOBAL INTERACTION SMOOTHNESS --- */
+/* This makes every button, link, and input transition smoothly */
+button, 
+a, 
+input, 
+select, 
+.card, 
+.menu-item {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Add a subtle lift effect to buttons and cards on hover */
+button:hover, 
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+button:active {
+  transform: translateY(0); /* Button presses down when clicked */
+}
+
+/* --- 2. PAGE LOAD ANIMATION --- */
+/* This defines the "Slide Up & Fade In" movement */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px); /* Starts slightly lower */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0); /* Ends in natural position */
+  }
+}
+
+/* We will apply this class to our pages */
+.page-animation {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
