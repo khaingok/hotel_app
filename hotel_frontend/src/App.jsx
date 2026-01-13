@@ -5,13 +5,13 @@ import Home from './pages/Home';
 import Reservations from './pages/Reservations';
 import Orders from './pages/Orders';
 import Login from './pages/Login';
+import Register from './pages/Register'; 
 import AdminDashboard from './pages/AdminDashboard';
-import AdminReservations from './pages/AdminReservations'; 
+import AdminReservations from './pages/AdminReservations';
 
 function App() {
   // 1. Initialize state from LocalStorage so login persists on refresh
-  const [userRole, setUserRole] = useState(localStorage.getItem('role') || 'guest');
-
+const [userRole, setUserRole] = useState(localStorage.getItem('role'));
   // 2. Function to update role (passed to Login page)
   const handleLogin = (role) => {
     localStorage.setItem('role', role);
@@ -20,34 +20,43 @@ function App() {
 
   // 3. Function to logout (passed to Navbar)
   const handleLogout = () => {
-    localStorage.removeItem('role');
-    setUserRole('guest');
-  };
+  localStorage.removeItem('role');
+  setUserRole(null); 
+};
 
   return (
     <Router>
-      {/* Pass role and logout function to Navbar */}
       <Navbar userRole={userRole} onLogout={handleLogout} />
       
       <Routes>
-        {/* PUBLIC ROUTES */}
+        {/* === PUBLIC ROUTES === */}
         <Route path="/" element={<Home />} />
         <Route path="/reservations" element={<Reservations />} />
         <Route path="/orders" element={<Orders />} />
-        
-        {/* LOGIN PAGE: Pass the handleLogin function */}
+        <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
 
+        {/* === STAFF ROUTES (Protected) === */}
+        
+        {/* 1. Admin Home */}
         <Route 
-        path="/admin" 
-        element={userRole === 'staff' ? <AdminDashboard /> : <Navigate to="/login" />} 
+          path="/admin" 
+          element={userRole === 'staff' ? <AdminDashboard /> : <Navigate to="/login" />} 
         />
   
-        {/* NEW ROUTE HERE */}
+        {/* 2. Room Management (Matches Navbar Link) */}
         <Route 
-        path="/admin/reservations" 
-        element={userRole === 'staff' ? <AdminReservations /> : <Navigate to="/login" />} 
+          path="/admin/rooms" 
+          element={userRole === 'staff' ? <AdminReservations /> : <Navigate to="/login" />} 
         />
+
+        {/* 3. Services Management (Matches Navbar Link) */}
+        {/* For now, we reuse the Orders page or you can make a new AdminServices page */}
+        <Route 
+          path="/admin/services" 
+          element={userRole === 'staff' ? <Orders /> : <Navigate to="/login" />} 
+        />
+
       </Routes>
     </Router>
   );
