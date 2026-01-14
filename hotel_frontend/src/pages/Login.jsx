@@ -23,15 +23,17 @@ export default function Login({ onLogin }) {
       const response = await axios.post('/api/auth/login', credentials);
       
       // 2. Get the user data from the response (id, username, role)
-      const user = response.data;
+      const data = response.data;
+
+      localStorage.setItem('token', data.token);
       
       // 3. Update the App state with the REAL role from the database
-      onLogin(user.role); 
+      onLogin(data.role); 
       
-      alert(`Welcome back, ${user.username}!`);
+      alert(`Welcome back, ${data.username}!`);
       
       // 4. Redirect based on their role
-      if (user.role === 'staff') {
+      if (data.role === 'staff') {
         navigate('/admin');
       } else {
         navigate('/'); // Guests go to Home
@@ -41,6 +43,12 @@ export default function Login({ onLogin }) {
       console.error("Login Error:", error);
       alert('Invalid Username or Password. Please try again.');
     }
+  };
+
+    const handleLogout = () => {
+      localStorage.removeItem('role');
+      localStorage.removeItem('token');
+      setUserRole(null);
   };
 
   return (

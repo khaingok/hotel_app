@@ -6,26 +6,67 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 public class SecurityConfig {
 
-    // 1. Define the BCrypt Bean so we can inject it into our Controller
+    private final JwtFilter jwtFilter;
+
+    public SecurityConfig(JwtFilter jwtFilter) {
+        this.jwtFilter = jwtFilter;
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // 2. Configure the "Security Chain" to allow all requests (for now)
-    // If we don't do this, Spring Boot will block your React App with a 401/403 Error.
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // Disable CSRF for simple API testing
+            // 1. Disable CSRF (Common for REST APIs)
+            .csrf(csrf -> csrf.disable())
+            
+            // 2. ENABLE CORS (Connects to the Bean below)
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            
+            // 3. Define URL Rules
             .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll() // Allow everyone to access everything (Login/Register/Reservations)
-            );
+                .requestMatchers("/api/auth/**").permitAll() // Allow Login/Register without token
+                .anyRequest().authenticated() // Block everything else
+            )
+            
+            // 4. Add JWT Filter
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         
         return http.build();
+    }
+
+    // --- GLOBAL CORS CONFIGURATION ---
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        
+        // Allow your Frontend URL
+        configuration.setAllowedOrigins(List.of("http://localhost:5173")); 
+        
+        // Allow common HTTP methods
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        
+        // Allow headers (Content-Type for JSON, Authorization for Tokens)
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        
+        // Allow credentials (if needed later)
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

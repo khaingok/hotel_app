@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Register from './pages/Register'; 
 import AdminDashboard from './pages/AdminDashboard';
 import AdminReservations from './pages/AdminReservations';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   // 1. Initialize state from LocalStorage so login persists on refresh
@@ -28,33 +29,58 @@ const [userRole, setUserRole] = useState(localStorage.getItem('role'));
     <Router>
       <Navbar userRole={userRole} onLogout={handleLogout} />
       
-      <Routes>
-        {/* === PUBLIC ROUTES === */}
+    <Routes>
+        {/* === PUBLIC ROUTES (Everyone can see) === */}
         <Route path="/" element={<Home />} />
-        <Route path="/reservations" element={<Reservations />} />
-        <Route path="/orders" element={<Orders />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
 
-        {/* === STAFF ROUTES (Protected) === */}
-        
-        {/* 1. Admin Home */}
+        {/* === PROTECTED GUEST ROUTES (Needs Token) === */}
         <Route 
-          path="/admin" 
-          element={userRole === 'staff' ? <AdminDashboard /> : <Navigate to="/login" />} 
+          path="/reservations" 
+          element={
+            <ProtectedRoute>
+              <Reservations />
+            </ProtectedRoute>
+          } 
         />
-  
-        {/* 2. Room Management (Matches Navbar Link) */}
+        
         <Route 
-          path="/admin/rooms" 
-          element={userRole === 'staff' ? <AdminReservations /> : <Navigate to="/login" />} 
+          path="/orders" 
+          element={
+            <ProtectedRoute>
+              <Orders />
+            </ProtectedRoute>
+          } 
         />
 
-        {/* 3. Services Management (Matches Navbar Link) */}
-        {/* For now, we reuse the Orders page or you can make a new AdminServices page */}
+        {/* === PROTECTED STAFF ROUTES (Needs Token + Role Check) === */}
+        <Route 
+          path="/admin" 
+          element={
+            <ProtectedRoute>
+               {/* We keep the role check too for extra safety */}
+               {userRole === 'staff' ? <AdminDashboard /> : <Navigate to="/" />}
+            </ProtectedRoute>
+          } 
+        />
+  
+        <Route 
+          path="/admin/rooms" 
+          element={
+            <ProtectedRoute>
+               {userRole === 'staff' ? <AdminReservations /> : <Navigate to="/" />}
+            </ProtectedRoute>
+          } 
+        />
+
         <Route 
           path="/admin/services" 
-          element={userRole === 'staff' ? <Orders /> : <Navigate to="/login" />} 
+          element={
+            <ProtectedRoute>
+               {userRole === 'staff' ? <Orders /> : <Navigate to="/" />}
+            </ProtectedRoute>
+          } 
         />
 
       </Routes>

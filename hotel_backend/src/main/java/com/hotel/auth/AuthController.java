@@ -1,8 +1,12 @@
 package com.hotel.auth;
 
+import java.util.Optional;
+import java.util.Map;
+import java.util.HashMap;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -32,20 +36,29 @@ public class AuthController {
         return userRepository.save(user);
     }
 
-    // LOGIN (Now with Hash Comparison!)
+    @Autowired // Add this
+    private JwtUtil jwtUtil;
+
     @PostMapping("/login")
-    public User login(@RequestBody User loginRequest) {
+    public Map<String, String> login(@RequestBody User loginRequest) {
         Optional<User> userOptional = userRepository.findByUsername(loginRequest.getUsername());
         
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            
-            // 3. Use matches() to compare Raw Password vs Stored Hash
-            // (Do NOT use .equals() anymore, because the hash looks different every time)
             if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-                return user;
+                
+                // GENERATE TOKEN
+                String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
+                
+                // Return Token + Role + Username to Frontend
+                Map<String, String> response = new HashMap<>();
+                response.put("token", token);
+                response.put("role", user.getRole());
+                response.put("username", user.getUsername());
+                return response;
             }
         }
         throw new RuntimeException("Invalid credentials");
     }
 }
+
