@@ -16,18 +16,24 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    private String role; // "guest" or "staff"
+    private String role; 
+    
+    // --- NEW FIELDS ---
+    private String name;   // Full Name
+    private String email;  // Email Address
 
     // --- CONSTRUCTORS ---
     public User() {}
 
-    public User(String username, String password, String role) {
+    public User(String username, String password, String role, String name, String email) {
         this.username = username;
         this.password = password;
         this.role = role;
+        this.name = name;
+        this.email = email;
     }
 
-    // --- MANUAL GETTERS & SETTERS (Required to fix the 500 Error) ---
+    // --- GETTERS & SETTERS ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -39,4 +45,11 @@ public class User {
 
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+
+    // New Getters & Setters
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 }

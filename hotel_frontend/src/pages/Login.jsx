@@ -54,15 +54,15 @@ export default function Login({ onLogin }) {
   return (
     <div className="login-container page-animation">
       <div className="login-card">
-        <h2>🔐 Login</h2>
+        <h2>Login</h2>
         <form onSubmit={handleLogin} className="login-form">
           
           <div className="input-group">
-            <label>Username</label>
+            <label>Email</label>
             <input 
               type="text" 
               name="username" 
-              placeholder="Enter your username"
+              placeholder="Enter your email"
               value={credentials.username}
               onChange={handleChange}
               className="login-input"

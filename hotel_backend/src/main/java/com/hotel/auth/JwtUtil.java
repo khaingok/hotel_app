@@ -18,9 +18,9 @@ public class JwtUtil {
     public String generateToken(String username, String role) {
         return Jwts.builder()
                 .setSubject(username)
-                .claim("role", role) // We store the role inside the token!
+                .claim("role", role)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 0.5))
                 .signWith(SECRET_KEY)
                 .compact();
     }

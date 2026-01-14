@@ -9,33 +9,62 @@ import Register from './pages/Register';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminReservations from './pages/AdminReservations';
 import ProtectedRoute from './components/ProtectedRoute';
+import { jwtDecode } from "jwt-decode";
 
 function App() {
-  // 1. Initialize state from LocalStorage so login persists on refresh
-const [userRole, setUserRole] = useState(localStorage.getItem('role'));
-  // 2. Function to update role (passed to Login page)
+const [userRole, setUserRole] = useState(localStorage.getItem('role'))
   const handleLogin = (role) => {
     localStorage.setItem('role', role);
     setUserRole(role);
   };
 
-  // 3. Function to logout (passed to Navbar)
   const handleLogout = () => {
   localStorage.removeItem('role');
+  localStorage.removeItem('token');
   setUserRole(null); 
 };
+
+useEffect(() => {
+    const token = localStorage.getItem('token');
+    
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        const currentTime = Date.now() / 1000; // Browser time in seconds
+        const timeLeft = decoded.exp - currentTime;
+
+        // 🕵️ SPY LOGS (Check Console!)
+        console.log("--- TOKEN CHECK ---");
+        console.log("Token Expiration (Backend):", decoded.exp);
+        console.log("Browser Time (Frontend):   ", currentTime);
+        console.log("Time Left (Seconds):       ", timeLeft);
+
+        if (timeLeft <= 0) {
+          console.error("❌ Token expired! Logging out.");
+          handleLogout();
+        } else {
+          console.log("✅ Token Valid. Setting timer.");
+          const timer = setTimeout(() => {
+            handleLogout();
+          }, timeLeft * 1000);
+          return () => clearTimeout(timer);
+        }
+      } catch (error) {
+        console.error("Token Decode Error:", error);
+        handleLogout();
+      }
+    }
+  }, [userRole]);
 
   return (
     <Router>
       <Navbar userRole={userRole} onLogout={handleLogout} />
       
     <Routes>
-        {/* === PUBLIC ROUTES (Everyone can see) === */}
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
 
-        {/* === PROTECTED GUEST ROUTES (Needs Token) === */}
         <Route 
           path="/reservations" 
           element={
@@ -54,12 +83,10 @@ const [userRole, setUserRole] = useState(localStorage.getItem('role'));
           } 
         />
 
-        {/* === PROTECTED STAFF ROUTES (Needs Token + Role Check) === */}
         <Route 
           path="/admin" 
           element={
             <ProtectedRoute>
-               {/* We keep the role check too for extra safety */}
                {userRole === 'staff' ? <AdminDashboard /> : <Navigate to="/" />}
             </ProtectedRoute>
           } 
