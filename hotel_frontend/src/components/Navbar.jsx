@@ -16,12 +16,10 @@ export default function Navbar({ userRole, onLogout }) {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  // Helper to determine the initial in the avatar (G for Guest, A for Admin)
   const avatarInitial = userRole === 'staff' ? 'A' : 'U';
 
   return (
     <nav className="navbar">
-      {/* Logo redirects based on Role */}
       <h1 className="navbar-logo">
         <Link to={userRole === 'staff' ? "/admin" : "/"} style={{color: 'white', textDecoration: 'none'}}>
           🏨 Grand Hotel
@@ -30,17 +28,14 @@ export default function Navbar({ userRole, onLogout }) {
 
       <ul className="navbar-menu">
         
-        {/* === 1. VISITOR VIEW (Not Logged In) === */}
         {!userRole && (
           <li>
              <Link to="/login" className="navbar-link" style={{ fontWeight: 'bold' }}>Login</Link>
           </li>
         )}
 
-        {/* === 2. LOGGED IN VIEWS (Both Guest & Staff) === */}
         {userRole && (
           <>
-            {/* Links for NORMAL GUESTS */}
             {userRole === 'guest' && (
               <>
                 <li><Link to="/" className="navbar-link">Home</Link></li>
@@ -49,16 +44,15 @@ export default function Navbar({ userRole, onLogout }) {
               </>
             )}
 
-            {/* Links for STAFF */}
             {userRole === 'staff' && (
               <>
                 <li><Link to="/admin" className="navbar-link">Home</Link></li>
                 <li><Link to="/admin/rooms" className="navbar-link">Room Management</Link></li>
                 <li><Link to="/admin/services" className="navbar-link">Services Management</Link></li>
+                <li><Link to="/admin/orders" className="navbar-link">Orders</Link></li>
               </>
             )}
             
-            {/* SHARED AVATAR DROPDOWN (For both roles) */}
             <li className="user-menu-container">
                 <button className="avatar-btn" onClick={toggleDropdown}>
                   {avatarInitial}
@@ -68,7 +62,7 @@ export default function Navbar({ userRole, onLogout }) {
                   <div className="dropdown-menu">
                     
                     {userRole === 'guest' && (
-                       <button className="dropdown-item">👤 My Profile</button>
+                        <button className="dropdown-item">👤 My Profile</button>
                     )}
 
                     <button onClick={handleLogoutClick} className="dropdown-item">

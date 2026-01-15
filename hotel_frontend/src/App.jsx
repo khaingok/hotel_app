@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Register from './pages/Register'; 
 import AdminDashboard from './pages/AdminDashboard';
 import AdminReservations from './pages/AdminReservations';
+import AdminOrders from './pages/AdminOrders';
 import ProtectedRoute from './components/ProtectedRoute';
 import { jwtDecode } from "jwt-decode";
 
@@ -103,6 +104,15 @@ useEffect(() => {
             </ProtectedRoute>
           } 
         />
+
+        <Route 
+        path="/admin/orders" 
+        element={
+         <ProtectedRoute>
+           {userRole === 'staff' ? <AdminOrders /> : <Navigate to="/" />}
+          </ProtectedRoute>
+  } 
+/>
 
       </Routes>
     </Router>

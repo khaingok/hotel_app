@@ -34,13 +34,10 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
-                // 1. Allow Login/Register
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers("/error").permitAll() 
                 
-                // 2. Allow OPTIONS (Preflight checks) for everyone
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
-                
-                // 3. Block everything else
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

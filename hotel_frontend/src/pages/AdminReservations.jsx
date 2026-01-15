@@ -5,10 +5,8 @@ import '../styles/AdminReservations.css';
 export default function AdminReservations() {
   const [reservations, setReservations] = useState([]);
   
-  // State to track which row is being edited
   const [editingId, setEditingId] = useState(null);
   
-  // State to hold the temporary data while editing
   const [editFormData, setEditFormData] = useState({
     guestName: '',
     roomType: '',
@@ -30,44 +28,35 @@ export default function AdminReservations() {
     }
   };
 
-  // --- 🧠 NEW: Helper function to calculate price ---
   const calculatePrice = (roomType, checkIn, checkOut) => {
-    // 1. Define Rates (Must match your booking logic)
-    let rate = 100; // Standard
+    let rate = 100;
     if (roomType === 'Deluxe') rate = 200;
     if (roomType === 'Suite') rate = 500;
 
-    // 2. Parse Dates
     const start = new Date(checkIn);
     const end = new Date(checkOut);
 
-    // 3. Calculate Nights
     if (!checkIn || !checkOut || isNaN(start) || isNaN(end)) return 0;
     
     const timeDiff = end - start;
     const nights = timeDiff / (1000 * 60 * 60 * 24);
 
-    // 4. Return Total (ensure non-negative)
     return nights > 0 ? nights * rate : 0;
   };
 
-  // 1. Start Editing: Turn the row into input boxes
   const handleEditClick = (reservation) => {
     setEditingId(reservation.id);
-    setEditFormData({ ...reservation }); // Copy current data to form
+    setEditFormData({ ...reservation });
   };
 
-  // 2. Handle Input Changes & Auto-Update Price
   const handleEditChange = (e) => {
     const { name, value } = e.target;
     
-    // Create a temporary copy of the form with the new value applied
     const nextFormData = {
       ...editFormData,
       [name]: value
     };
 
-    // If the changed field affects price, recalculate immediately
     if (name === 'roomType' || name === 'checkInDate' || name === 'checkOutDate') {
         const newPrice = calculatePrice(
             nextFormData.roomType, 
@@ -76,30 +65,25 @@ export default function AdminReservations() {
         );
         nextFormData.totalPrice = newPrice;
     }
-
-    // Update state
     setEditFormData(nextFormData);
   };
 
-  // 3. Save Changes: Send PUT request
   const handleSave = async (id) => {
     try {
       await axios.put(`/api/reservations/${id}`, editFormData);
       
-      setEditingId(null); // Exit edit mode
-      loadReservations(); // Refresh data
+      setEditingId(null);
+      loadReservations();
       alert("Reservation updated successfully!");
     } catch (error) {
       alert("Failed to update reservation.");
     }
   };
 
-  // 4. Cancel Editing
   const handleCancel = () => {
     setEditingId(null);
   };
 
-  // 5. Handle Delete
   const handleDelete = async (id) => {
     if(window.confirm(`Are you sure you want to cancel reservation #${id}?`)) {
         try {
@@ -133,11 +117,7 @@ export default function AdminReservations() {
           <tbody>
             {reservations.map((res) => (
               <tr key={res.id}>
-                
-                {/* === CONDITIONAL RENDERING === */}
-                
                 {editingId === res.id ? (
-                  // --- EDIT MODE ---
                   <>
                     <td>#{res.id}</td>
                     <td>
@@ -187,7 +167,7 @@ export default function AdminReservations() {
                         onChange={handleEditChange}
                         className="edit-input"
                         style={{width: '70px', backgroundColor: '#eee'}}
-                        readOnly // Optional: Prevent manual price editing to force auto-calc
+                        readOnly
                       />
                     </td>
                     <td>
@@ -196,7 +176,6 @@ export default function AdminReservations() {
                     </td>
                   </>
                 ) : (
-                  // --- VIEW MODE ---
                   <>
                     <td>#{res.id}</td>
                     <td><strong>{res.guestName}</strong></td>

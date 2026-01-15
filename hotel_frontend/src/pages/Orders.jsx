@@ -47,7 +47,7 @@ export default function Orders() {
 
     try {
       const payload = {
-        serviceName: item.name,
+        serviceType: item.name,
         price: item.price
       };
 
@@ -117,7 +117,7 @@ export default function Orders() {
                 <ul className="history-list">
                   {orderHistory.map(order => (
                     <li key={order.id} className="history-item">
-                      <span>{order.serviceName}</span>
+                      <span>{order.serviceType}</span>
                       <span>${order.price.toFixed(2)}</span>
                     </li>
                   ))}

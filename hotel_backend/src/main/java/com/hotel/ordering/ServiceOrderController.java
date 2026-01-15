@@ -2,8 +2,11 @@ package com.hotel.ordering;
 
 import com.hotel.reservation.Reservation;
 import com.hotel.reservation.ReservationRepository;
+import org.springframework.http.HttpStatus; // <--- Import this
+import org.springframework.http.ResponseEntity; // <--- Import this
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Optional; // <--- Import this
 
 @RestController
 @RequestMapping("/api/orders")
@@ -17,17 +20,33 @@ public class ServiceOrderController {
         this.reservationRepository = reservationRepository;
     }
 
+    // ✅ UPDATED: Returns ResponseEntity to handle errors gracefully
     @PostMapping
-    public ServiceOrder createOrder(@RequestParam Long reservationId, @RequestBody ServiceOrder order) {
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new RuntimeException("Reservation not found with id: " + reservationId));
+    public ResponseEntity<?> createOrder(@RequestParam("reservationId") Long reservationId, @RequestBody ServiceOrder order) {
         
-        order.setReservation(reservation);
-        return orderRepository.save(order);
+        // 1. Try to find the reservation safely
+        Optional<Reservation> reservationOpt = reservationRepository.findById(reservationId);
+        
+        // 2. If NOT found, return 404 (Not Found) instead of Crashing (500)
+        if (reservationOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                 .body("Error: Reservation ID " + reservationId + " does not exist.");
+        }
+        
+        // 3. If found, save the order
+        order.setReservation(reservationOpt.get());
+        ServiceOrder savedOrder = orderRepository.save(order);
+        
+        return ResponseEntity.ok(savedOrder);
     }
 
     @GetMapping("/reservation/{reservationId}")
-    public List<ServiceOrder> getOrdersByReservation(@PathVariable Long reservationId) {
+    public List<ServiceOrder> getOrdersByReservation(@PathVariable("reservationId") Long reservationId) {
         return orderRepository.findByReservationId(reservationId);
+    }
+
+    @GetMapping
+    public List<ServiceOrder> getAllOrders() {
+        return orderRepository.findAll();
     }
 }
