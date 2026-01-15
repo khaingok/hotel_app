@@ -30,14 +30,8 @@ useEffect(() => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        const currentTime = Date.now() / 1000; // Browser time in seconds
+        const currentTime = Date.now() / 1000;
         const timeLeft = decoded.exp - currentTime;
-
-        // 🕵️ SPY LOGS (Check Console!)
-        console.log("--- TOKEN CHECK ---");
-        console.log("Token Expiration (Backend):", decoded.exp);
-        console.log("Browser Time (Frontend):   ", currentTime);
-        console.log("Time Left (Seconds):       ", timeLeft);
 
         if (timeLeft <= 0) {
           console.error("❌ Token expired! Logging out.");

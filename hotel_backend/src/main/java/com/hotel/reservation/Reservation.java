@@ -32,8 +32,6 @@ public class Reservation {
     private Double totalPrice;
     
     private String status = "BOOKED"; 
-
-    // --- MANUAL GETTERS & SETTERS (Required because Lombok is broken) ---
     
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

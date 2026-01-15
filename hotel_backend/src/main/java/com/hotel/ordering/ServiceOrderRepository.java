@@ -4,8 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ServiceOrderRepository extends JpaRepository<ServiceOrder, Long> {
-    
-    // Find all orders for a specific reservation ID
-    // Usage: To show the bill for a specific room
     List<ServiceOrder> findByReservationId(Long reservationId);
 }

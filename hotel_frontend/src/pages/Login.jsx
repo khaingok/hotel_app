@@ -19,24 +19,22 @@ export default function Login({ onLogin }) {
     e.preventDefault();
     
     try {
-      // 1. Send the username/password to your Spring Boot Backend
       const response = await axios.post('/api/auth/login', credentials);
       
-      // 2. Get the user data from the response (id, username, role)
       const data = response.data;
 
       localStorage.setItem('token', data.token);
+
+      localStorage.setItem('userName', data.name);
       
-      // 3. Update the App state with the REAL role from the database
       onLogin(data.role); 
       
-      alert(`Welcome back, ${data.username}!`);
+      alert(`Welcome back, ${data.name}!`);
       
-      // 4. Redirect based on their role
       if (data.role === 'staff') {
         navigate('/admin');
       } else {
-        navigate('/'); // Guests go to Home
+        navigate('/');
       }
 
     } catch (error) {
@@ -48,6 +46,7 @@ export default function Login({ onLogin }) {
     const handleLogout = () => {
       localStorage.removeItem('role');
       localStorage.removeItem('token');
+      localStorage.removeItem('userName');
       setUserRole(null);
   };
 
@@ -85,7 +84,6 @@ export default function Login({ onLogin }) {
 
           <button type="submit" className="login-btn">Log In</button>
 
-          {/* New Link to Register Page */}
           <div style={{ marginTop: '15px', fontSize: '0.9rem' }}>
             <p>Don't have an account?</p>
             <Link to="/register" style={{ color: '#0056b3', fontWeight: 'bold' }}>

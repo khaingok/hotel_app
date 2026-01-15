@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "service_orders")
-@Data // We keep this, but we add manual methods just in case
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ServiceOrder {
@@ -29,8 +29,6 @@ public class ServiceOrder {
     @ManyToOne(optional = false)
     @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
-
-    // --- MANUAL GETTERS & SETTERS (To fix the Lombok error) ---
 
     public void setReservation(Reservation reservation) {
         this.reservation = reservation;

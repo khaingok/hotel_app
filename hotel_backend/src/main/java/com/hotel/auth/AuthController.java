@@ -1,43 +1,42 @@
 package com.hotel.auth;
 
-import java.util.Optional;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:5173")
+
 public class AuthController {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder; // <--- Inject the hasher
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
-    // Constructor Injection
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthController(UserRepository userRepository, 
+                          PasswordEncoder passwordEncoder, 
+                          JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
-    // REGISTER (Now with Hashing!)
     @PostMapping("/register")
     public User register(@RequestBody User user) {
-        // 1. Force role to guest
+        if (user.getUsername() == null || user.getUsername().isEmpty()) {
+            throw new RuntimeException("Username (Email) is required!");
+        }
+
         user.setRole("guest");
 
-        // 2. Hash the password before saving!
         String rawPassword = user.getPassword();
-        String encodedPassword = passwordEncoder.encode(rawPassword);
-        user.setPassword(encodedPassword);
+        user.setPassword(passwordEncoder.encode(rawPassword));
 
         return userRepository.save(user);
     }
-
-    @Autowired // Add this
-    private JwtUtil jwtUtil;
 
     @PostMapping("/login")
     public Map<String, String> login(@RequestBody User loginRequest) {
@@ -47,18 +46,16 @@ public class AuthController {
             User user = userOptional.get();
             if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
                 
-                // GENERATE TOKEN
                 String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
                 
-                // Return Token + Role + Username to Frontend
                 Map<String, String> response = new HashMap<>();
                 response.put("token", token);
                 response.put("role", user.getRole());
                 response.put("username", user.getUsername());
+                response.put("name", user.getName());                
                 return response;
             }
         }
         throw new RuntimeException("Invalid credentials");
     }
 }
-

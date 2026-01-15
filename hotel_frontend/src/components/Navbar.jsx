@@ -66,11 +66,7 @@ export default function Navbar({ userRole, onLogout }) {
 
                 {isDropdownOpen && (
                   <div className="dropdown-menu">
-                    <div className="dropdown-header">
-                      Logged in as <strong>{userRole === 'staff' ? 'Staff' : 'Guest'}</strong>
-                    </div>
                     
-                    {/* Optional: Add Profile link for guests later */}
                     {userRole === 'guest' && (
                        <button className="dropdown-item">👤 My Profile</button>
                     )}
