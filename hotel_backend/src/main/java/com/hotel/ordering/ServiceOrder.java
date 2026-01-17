@@ -13,8 +13,6 @@ public class ServiceOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // ✅ FIX: Use 'serviceType' (matches Frontend JSON)
-    // ❌ OLD: private String serviceName; 
     @Column(nullable = false)
     private String serviceType; 
 
@@ -29,8 +27,6 @@ public class ServiceOrder {
     @JoinColumn(name = "reservation_id", nullable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
     private Reservation reservation;
-
-    // --- MANUAL GETTERS & SETTERS (Must match the field name!) ---
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

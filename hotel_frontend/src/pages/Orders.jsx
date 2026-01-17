@@ -7,7 +7,6 @@ export default function Orders() {
   const [activeReservation, setActiveReservation] = useState(null);
   const [orderHistory, setOrderHistory] = useState([]);
 
-  // Hardcoded Menu for the MVP (In a real app, this comes from the database)
   const menuItems = [
     { name: 'Room Service: Breakfast', price: 20.00 },
     { name: 'Room Service: Pizza', price: 15.00 },
@@ -16,15 +15,12 @@ export default function Orders() {
     { name: 'Minibar: Champagne', price: 50.00 },
   ];
 
-  // 1. "Log in" to the room
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      // Check if reservation exists
       const res = await axios.get(`/api/reservations/${reservationId}`);
       setActiveReservation(res.data);
       
-      // Load previous orders for this room
       fetchOrders(reservationId);
     } catch (error) {
       alert('Reservation not found! Please check ID.');
@@ -41,7 +37,6 @@ export default function Orders() {
     }
   };
 
-  // 2. Place a new Order
   const handleOrder = async (item) => {
     if (!confirm(`Order ${item.name} for $${item.price}?`)) return;
 
@@ -51,11 +46,9 @@ export default function Orders() {
         price: item.price
       };
 
-      // POST /api/orders?reservationId=1
       await axios.post(`/api/orders?reservationId=${reservationId}`, payload);
       
       alert('Order Placed!');
-      // Refresh the list to show the new item
       fetchOrders(reservationId);
     } catch (error) {
       alert('Failed to place order.');
@@ -90,7 +83,6 @@ export default function Orders() {
           </div>
 
           <div className="orders-grid">
-            {/* LEFT: MENU */}
             <div className="card">
               <h3>🛎️ Service Menu</h3>
               <ul className="menu-list">
@@ -108,7 +100,6 @@ export default function Orders() {
               </ul>
             </div>
 
-            {/* RIGHT: BILL */}
             <div className="card">
               <h3>🧾 Current Bill</h3>
               {orderHistory.length === 0 ? (

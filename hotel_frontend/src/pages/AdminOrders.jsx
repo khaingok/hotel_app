@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import '../styles/AdminReservations.css'; // Re-use the table styles
+import '../styles/AdminReservations.css';
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);

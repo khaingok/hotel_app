@@ -20,19 +20,16 @@ export default function Register() {
 const handleRegister = async (e) => {
     e.preventDefault();
 
-    // 1. VALIDATION: Check Password Length (New!)
     if (formData.password.length < 8) {
       alert("⚠️ Password must be at least 8 characters long.");
-      return; // Stop here
+      return;
     }
 
-    // 2. VALIDATION: Check Password Match
     if (formData.password !== formData.confirmPassword) {
       alert("⚠️ Passwords do not match!");
       return;
     }
 
-    // 3. VALIDATION: Check Email Format
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     if (!emailRegex.test(formData.email)) {
         alert("⚠️ Please enter a valid email address.");
@@ -40,10 +37,9 @@ const handleRegister = async (e) => {
     }
 
     try {
-      // Logic to send data...
       const payload = {
           name: formData.name,
-          username: formData.email, // Mapping Email -> Username
+          username: formData.email,
           password: formData.password
       };
 
@@ -58,11 +54,10 @@ const handleRegister = async (e) => {
 
   return (
     <div className="login-container page-animation">
-      <div className="login-card" style={{ maxWidth: '450px' }}> {/* Slightly wider for more fields */}
+      <div className="login-card" style={{ maxWidth: '450px' }}>
         <h2>Create Account</h2>
         <form onSubmit={handleRegister} className="login-form">
           
-          {/* Full Name */}
           <div className="input-group">
             <label>Full Name</label>
             <input 
@@ -75,7 +70,6 @@ const handleRegister = async (e) => {
             />
           </div>
 
-          {/* Email */}
           <div className="input-group">
             <label>Email Address</label>
             <input 
@@ -88,7 +82,6 @@ const handleRegister = async (e) => {
             />
           </div>
 
-          {/* Password */}
           <div className="input-group">
             <label>Password</label>
             <input 
@@ -101,7 +94,6 @@ const handleRegister = async (e) => {
             />
           </div>
 
-          {/* Confirm Password */}
           <div className="input-group">
             <label>Confirm Password</label>
             <input 

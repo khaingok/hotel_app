@@ -1,10 +1,10 @@
 package com.hotel.reservation;
 
-import org.springframework.http.HttpStatus; // <--- Add this
-import org.springframework.http.ResponseEntity; // <--- Add this
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Optional; // <--- Add this
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/reservations")
@@ -16,7 +16,6 @@ public class ReservationController {
         this.reservationRepository = reservationRepository;
     }
 
-    // ... (Keep getAllReservations and createReservation as they are) ...
     @GetMapping
     public List<Reservation> getAllReservations() {
         return reservationRepository.findAll();
@@ -27,7 +26,6 @@ public class ReservationController {
         return reservationRepository.save(reservation);
     }
 
-    // ✅ FIX: Use ResponseEntity to handle "Not Found" gracefully
     @GetMapping("/{id}")
     public ResponseEntity<?> getReservationById(@PathVariable("id") Long id) {
         Optional<Reservation> reservation = reservationRepository.findById(id);
@@ -35,18 +33,14 @@ public class ReservationController {
         if (reservation.isPresent()) {
             return ResponseEntity.ok(reservation.get());
         } else {
-            // Return 404 (Not Found) instead of Crashing
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                  .body("Reservation ID " + id + " not found.");
         }
     }
     
-    // ... (Keep PUT and DELETE methods as they are) ...
     @PutMapping("/{id}")
     public Reservation updateReservation(@PathVariable("id") Long id, @RequestBody Reservation updatedReservation) {
-        // ... existing code ...
         return reservationRepository.findById(id).map(r -> {
-             // ... set fields ...
              return reservationRepository.save(r);
         }).orElseThrow(() -> new RuntimeException("Reservation not found"));
     }

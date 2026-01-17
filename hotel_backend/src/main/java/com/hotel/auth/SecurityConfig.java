@@ -48,11 +48,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        
-        // Allow your Frontend URL
+    
         configuration.setAllowedOrigins(List.of("http://localhost:5173")); 
         
-        // Allow all methods including PUT and DELETE
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
