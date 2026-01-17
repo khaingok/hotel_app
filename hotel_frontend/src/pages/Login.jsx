@@ -26,6 +26,8 @@ export default function Login({ onLogin }) {
       localStorage.setItem('token', data.token);
 
       localStorage.setItem('userName', data.name);
+
+      localStorage.setItem('uid', credentials.username);
       
       onLogin(data.role); 
       

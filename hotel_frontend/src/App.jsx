@@ -9,6 +9,7 @@ import Register from './pages/Register';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminReservations from './pages/AdminReservations';
 import AdminOrders from './pages/AdminOrders';
+import Profile from './pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
 import { jwtDecode } from "jwt-decode";
 
@@ -74,6 +75,15 @@ useEffect(() => {
           element={
             <ProtectedRoute>
               <Orders />
+            </ProtectedRoute>
+          } 
+        />
+
+        <Route 
+          path="/profile" 
+          element={
+            <ProtectedRoute>
+              <Profile />
             </ProtectedRoute>
           } 
         />

@@ -12,6 +12,11 @@ export default function Navbar({ userRole, onLogout }) {
     navigate('/login'); 
   };
 
+  const handleProfileClick = () => {
+    setIsDropdownOpen(false);
+    navigate('/profile');    
+  };
+
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
@@ -62,7 +67,9 @@ export default function Navbar({ userRole, onLogout }) {
                   <div className="dropdown-menu">
                     
                     {userRole === 'guest' && (
-                        <button className="dropdown-item">👤 My Profile</button>
+                        <button onClick={handleProfileClick} className="dropdown-item">
+                            👤 My Profile
+                        </button>
                     )}
 
                     <button onClick={handleLogoutClick} className="dropdown-item">

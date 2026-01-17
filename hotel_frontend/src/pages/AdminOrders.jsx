@@ -30,14 +30,14 @@ export default function AdminOrders() {
             <tr>
               <th>Order ID</th>
               <th>Reservation ID</th>
-              <th>Guest Name</th> {/* We can see this because Order is linked to Reservation! */}
+              <th>Guest Name</th>
               <th>Service</th>
               <th>Price</th>
               <th>Status</th>
             </tr>
           </thead>
           <tbody>
-            {orders.map((order) => (
+            {orders.map((order, index) => (
                 <tr key={order.id || index}>
                 <td>#{order.id}</td>
                 <td>#{order.reservation?.id || 'N/A'}</td> 
